@@ -133,6 +133,7 @@ public class ConverterMainUi extends javax.swing.JFrame {
                 int totalPages = doc.getPages().getCount();
                 for (int i = 0; i < totalPages; i++) {
                     if (isCancelled()) {
+                        // show the cancel message
                         JOptionPane.showMessageDialog(null, "Cancled ", "Info", JOptionPane.INFORMATION_MESSAGE);
                         break;
                         }

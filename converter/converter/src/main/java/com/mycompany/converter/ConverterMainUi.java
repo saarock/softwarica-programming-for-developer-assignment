@@ -2,11 +2,13 @@ package com.mycompany.converter;
 
 import com.spire.pdf.FileFormat;
 import com.spire.pdf.PdfDocument;
-
 import javax.swing.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+//Have to  write the pseudo code;
+
 
 public class ConverterMainUi extends javax.swing.JFrame {
 

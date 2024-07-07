@@ -10,9 +10,13 @@ import java.util.List;
 
 public class ConverterMainUi extends javax.swing.JFrame {
 
+    // File array to store the selected file by the user
     private File[] selectedFiles;
+    // progress bar list to show the progress for each task 
     private List<JProgressBar> progressBars;
+    // for each task there is cancle button whihc is handled by this list;
     private List<JButton> cancelButtons;
+    // for each task each swing worker work
     private List<SwingWorker<Void, Integer>> workers;
 
     public ConverterMainUi() {
@@ -100,6 +104,7 @@ public class ConverterMainUi extends javax.swing.JFrame {
         progressBar.setStringPainted(true);
         progressBar.setValue(0);
 
+        // addging each item for each task eg: proressBar, cancleButton and label with the file name;
         SwingUtilities.invokeLater(() -> {
             filePanel.add(new JLabel("Converting " + inputFile.getName()));
             filePanel.add(progressBar);
@@ -174,6 +179,7 @@ public class ConverterMainUi extends javax.swing.JFrame {
     }
 
     private void displaySelectedFiles(File[] files) {
+        // clear all the things or keep default before starting
         filePanel.removeAll();
         progressBars.clear();
         cancelButtons.clear();

@@ -2,6 +2,7 @@ package com.mycompany.converter;
 
 import com.spire.pdf.FileFormat;
 import com.spire.pdf.PdfDocument;
+
 import javax.swing.*;
 import java.io.File;
 import java.util.ArrayList;
@@ -12,11 +13,13 @@ public class ConverterMainUi extends javax.swing.JFrame {
     private File[] selectedFiles;
     private List<JProgressBar> progressBars;
     private List<JButton> cancelButtons;
+    private List<SwingWorker<Void, Integer>> workers;
 
     public ConverterMainUi() {
         initComponents();
         progressBars = new ArrayList<>();
         cancelButtons = new ArrayList<>();
+        workers = new ArrayList<>();
     }
 
     private void initComponents() {
@@ -29,46 +32,38 @@ public class ConverterMainUi extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jButton1.setText("Select files");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
+        jButton1.addActionListener(evt -> jButton1ActionPerformed(evt));
 
         filePanel.setLayout(new javax.swing.BoxLayout(filePanel, javax.swing.BoxLayout.Y_AXIS));
         jScrollPane1.setViewportView(filePanel);
 
         jButton2.setText("Convert selected files");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
-            }
-        });
+        jButton2.addActionListener(evt -> jButton2ActionPerformed(evt));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jButton1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton2)))
-                .addContainerGap())
+                .addGroup(layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(jButton1)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButton2)))
+                    .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 249, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGroup(layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jButton1)
+                        .addComponent(jButton2))
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 249, Short.MAX_VALUE)
+                    .addContainerGap())
         );
 
         pack();
@@ -76,16 +71,13 @@ public class ConverterMainUi extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
         JFileChooser jFileChooser = new JFileChooser();
-        jFileChooser.setMultiSelectionEnabled(true); // Enable multiple file selection
+        jFileChooser.setMultiSelectionEnabled(true);
         int returnValue = jFileChooser.showOpenDialog(this);
 
         if (returnValue == JFileChooser.APPROVE_OPTION) {
-            // Files have been selected
             File[] files = jFileChooser.getSelectedFiles();
             selectedFiles = files;
             displaySelectedFiles(files);
-        } else {
-            // No file was selected
         }
     }
 
@@ -102,47 +94,44 @@ public class ConverterMainUi extends javax.swing.JFrame {
     }
 
     private void addConversionTask(File inputFile, String outputFilePath) {
-        SwingWorker<Void, Integer> worker = new SwingWorker<Void, Integer>() {
+        JProgressBar progressBar = new JProgressBar(0, 100);
+        JButton cancelButton = new JButton("Cancel");
+
+        progressBar.setStringPainted(true);
+        progressBar.setValue(0);
+
+        SwingUtilities.invokeLater(() -> {
+            filePanel.add(new JLabel("Converting " + inputFile.getName()));
+            filePanel.add(progressBar);
+            filePanel.add(cancelButton);
+            filePanel.revalidate();
+            filePanel.repaint();
+
+            progressBars.add(progressBar);
+            cancelButtons.add(cancelButton);
+        });
+
+        SwingWorker<Void, Integer> worker = new SwingWorker<>() {
             @Override
             protected Void doInBackground() throws Exception {
-                JProgressBar progressBar = new JProgressBar(0, 100);
-                JButton cancelButton = new JButton("Cancel");
-
-                progressBar.setStringPainted(true);
-                progressBar.setValue(0);
-
-                filePanel.add(new JLabel("Converting " + inputFile.getName()));
-                filePanel.add(progressBar);
-                filePanel.add(cancelButton);
-                filePanel.revalidate();
-                filePanel.repaint();
-
-                progressBars.add(progressBar);
-                cancelButtons.add(cancelButton);
-
-                cancelButton.addActionListener(new java.awt.event.ActionListener() {
-                    public void actionPerformed(java.awt.event.ActionEvent evt) {
-                        cancel(true);
-                    }
-                });
-
-                // Perform PDF to DOCX conversion
                 PdfDocument doc = new PdfDocument();
                 doc.loadFromFile(inputFile.getAbsolutePath());
 
                 int totalPages = doc.getPages().getCount();
                 for (int i = 0; i < totalPages; i++) {
                     if (isCancelled()) {
-                        // show the cancel message
-                        JOptionPane.showMessageDialog(null, "Cancled ", "Info", JOptionPane.INFORMATION_MESSAGE);
+                        SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(null, "Conversion canceled for " + inputFile.getName(), "Info", JOptionPane.INFORMATION_MESSAGE));
                         break;
-                        }
-                    Thread.sleep(1000);
-                    doc.saveToFile(outputFilePath, FileFormat.DOCX);
+                    }
+                    // Simulate the page conversion progress
+                    Thread.sleep(500); // Simulate conversion time
                     int progress = (int) (((i + 1.0) / totalPages) * 100);
                     publish(progress);
                 }
 
+                if (!isCancelled()) {
+                    doc.saveToFile(outputFilePath, FileFormat.DOCX);
+                }
                 doc.close();
 
                 return null;
@@ -151,14 +140,35 @@ public class ConverterMainUi extends javax.swing.JFrame {
             @Override
             protected void process(List<Integer> chunks) {
                 int progress = chunks.get(chunks.size() - 1);
-                progressBars.get(progressBars.size() - 1).setValue(progress);
+                progressBar.setValue(progress);
             }
 
             @Override
             protected void done() {
-                JOptionPane.showMessageDialog(null, "Conversion completed for " + inputFile.getName(), "Info", JOptionPane.INFORMATION_MESSAGE);
+                try {
+                    get();
+                    if (!isCancelled()) {
+                        JOptionPane.showMessageDialog(null, "Conversion completed for " + inputFile.getName(), "Info", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                } catch (Exception e) {
+                    if (isCancelled()) {
+                        JOptionPane.showMessageDialog(null, "Conversion canceled for " + inputFile.getName(), "Info", JOptionPane.INFORMATION_MESSAGE);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Conversion failed for " + inputFile.getName(), "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
             }
         };
+
+        workers.add(worker);
+        // cancle button to cancle task in the worker threads 
+        cancelButton.addActionListener(evt -> {
+            worker.cancel(true);
+            SwingUtilities.invokeLater(() -> {
+                progressBar.setValue(0);
+                JOptionPane.showMessageDialog(null, "Conversion canceled for " + inputFile.getName(), "Info", JOptionPane.INFORMATION_MESSAGE);
+            });
+        });
 
         worker.execute();
     }
@@ -167,6 +177,7 @@ public class ConverterMainUi extends javax.swing.JFrame {
         filePanel.removeAll();
         progressBars.clear();
         cancelButtons.clear();
+        workers.clear();
 
         for (File file : files) {
             filePanel.add(new JLabel(file.getName()));
@@ -177,7 +188,6 @@ public class ConverterMainUi extends javax.swing.JFrame {
     }
 
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -189,19 +199,14 @@ public class ConverterMainUi extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(ConverterMainUi.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new ConverterMainUi().setVisible(true);
-            }
-        });
+        java.awt.EventQueue.invokeLater(() -> new ConverterMainUi().setVisible(true));
     }
 
-    // Variables declaration - do not modify                     
+    // Variables declaration - do not modify
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JPanel filePanel;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    // End of variables declaration                   
+    // End of variables declaration
 }

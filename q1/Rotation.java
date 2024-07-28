@@ -64,6 +64,10 @@ public class Rotation {
             if (clockOrAntiClock == 0) {
                 // Counter-clockwise
                 for (int k = shifts[i][0]; k<=shifts[i][1]; k++) {
+                    if (chars[k] == 'a') {
+                        chars[k] = 'z';
+                        continue;
+                    }
                     int current = chars[k] - 1;
                     char currentChar = (char) current;                    
                     chars[k] = currentChar;
@@ -72,6 +76,10 @@ public class Rotation {
             } else {
                 // Clockwise
                 for (int k = shifts[i][0]; k<=shifts[i][1]; k++) {
+                    if (chars[k] == 'z') {
+                        chars[k] = 'a';
+                        continue;
+                    }
                     int current = chars[k] + 1;
                     char currentChar = (char) current;
                     chars[k] = currentChar;

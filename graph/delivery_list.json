@@ -1,0 +1,11 @@
+{
+    "deliveries": [
+      {"address": [12,45], "priority": 1},
+      {"address": [12.90809, 90], "priority": 2}
+    ],
+    "vehicle": {
+      "capacity": 50,
+      "max_distance": 100
+    }
+  }
+  

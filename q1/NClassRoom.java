@@ -3,6 +3,45 @@ package q1;
 import java.util.PriorityQueue;
 import java.util.Random;
 
+
+// Pseudo code for NClassRoom
+
+// Define a class for scheduling classrooms
+
+// Define static variables:
+// roomId: ID counter for rooms
+// n: number of available rooms
+// roomUsage: array to track the usage of each room
+
+// Define a class for classes (Cls) with:
+// - startTime: start time of the class
+// - endTime: end time of the class
+// - size: size of the class
+// - compareTo method to compare classes based on start time and size
+
+// Define a class for running classes (RunningClass) with:
+// - endTime: end time of the running class
+// - roomNumber: number of the room in use
+// - compareTo method to compare running classes based on end time
+
+// Define a scheduling function that takes an array of classes as input:
+// - Initialize a priority queue for classes and running classes
+// - Add classes to the scheduleClass priority queue
+// - While there are classes to schedule:
+//     - Poll the next class from the scheduleClass queue
+//     - Remove running classes that end before the start of the new class
+//     - If there is an available room, assign the class to that room
+//     - If all rooms are occupied, reassign the class to the room of the class that ends the earliest
+// - Track the usage of each room
+// - Find and print the room with the maximum usage
+// - Return the room with the maximum usage
+
+// Define the main function:
+// - Create a sample array of classes
+// - Call the scheduling function with the sample classes
+// - Print the result
+
+
 public class NClassRoom {
 
     public static int roomId = 0;

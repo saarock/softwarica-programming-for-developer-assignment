@@ -1,7 +1,6 @@
+// package q1;
 
-
-
- // Pseudo code
+// Pseudo code
 // Function encode(input: String, shifts: 2D array of integers) -> String:
 //     # Convert the input string to a character array for manipulation
 //     chars = Convert input to character array

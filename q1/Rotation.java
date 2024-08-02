@@ -1,4 +1,4 @@
-// package q1;
+ package q1;
 
 // Pseudo code
 // Function encode(input: String, shifts: 2D array of integers) -> String:
@@ -67,8 +67,9 @@ public class Rotation {
                         chars[k] = 'z';
                         continue;
                     }
+
                     int current = chars[k] - 1;
-                    char currentChar = (char) current;                    
+                    char currentChar = (char) current;
                     chars[k] = currentChar;
                 }
 

@@ -1,4 +1,3 @@
- package q1;
 
 // Pseudo code
 // Function encode(input: String, shifts: 2D array of integers) -> String:

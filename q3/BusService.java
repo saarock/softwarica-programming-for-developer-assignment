@@ -83,7 +83,7 @@ public class BusService {
         }
 
 
-        int k = 2;
+        int k = 3;
 
 
         reArrange(passengers, k);

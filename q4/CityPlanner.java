@@ -1,5 +1,126 @@
 package q4;
 
+
+/**
+ * Class Pair:
+    Attributes:
+        - node: Integer
+        - distance: Integer
+
+    Method compareTo(Pair that):
+        Return comparison of this.distance and that.distance
+
+Method dijkstra(graph, src, numNodes):
+    Create priority queue (pq)
+    Add Pair(src, 0) to pq
+    
+    Initialize distance array (dist) with infinity
+    Initialize visited array with false
+    Set dist[src] to 0
+    
+    While pq is not empty:
+        Poll the smallest distance node (curr) from pq
+        Set u to curr.node
+
+        If curr.distance is greater than dist[u]:
+            Continue
+
+        If u is not visited:
+            Mark u as visited
+
+            For each neighbor (Pair) of node u:
+                Set v to neighbor.node
+                Set weight to neighbor.distance
+                Set newDist to dist[u] + weight
+
+                If newDist is less than dist[v] and v is not visited:
+                    Update dist[v] to newDist
+                    Add Pair(v, newDist) to pq
+    
+    Return dist
+
+Method findShortestPath(graph, src, dest, numNodes):
+    Call dijkstra(graph, src, numNodes) to get distances
+    Return distance to dest
+
+Method adjustRoadWeights(roads, src, dest, targetTime, numNodes):
+    Initialize graph as empty list of lists
+    Initialize constructionEdges as empty list
+    
+    For each road in roads:
+        Set u, v, weight from road
+        
+        If weight is -1:
+            Add [u, v] to constructionEdges
+        Else:
+            Add Pair(v, weight) to graph[u]
+            Add Pair(u, weight) to graph[v]
+
+    For each road in constructionEdges:
+        Set u, v
+        Add Pair(v, 1) to graph[u]
+        Add Pair(u, 1) to graph[v]
+
+    Set currentShortestTime to findShortestPath(graph, src, dest, numNodes)
+    Print initial shortest time
+
+    While currentShortestTime is not equal to targetTime:
+        If currentShortestTime is less than targetTime:
+            For each road in constructionEdges:
+                Set u, v
+                Set additionalTime to targetTime - currentShortestTime
+                Set newWeight to random integer between 1 and additionalTime + 1
+                Update edge weights in graph with newWeight
+                Set currentShortestTime to findShortestPath(graph, src, dest, numNodes)
+                If currentShortestTime equals targetTime:
+                    Break
+
+        Else:
+            For each road in constructionEdges:
+                Set u, v
+                Set decreaseTime to currentShortestTime - targetTime
+                Set newWeight to random integer between 1 and decreaseTime + 1
+                Update edge weights in graph with newWeight
+                Set currentShortestTime to findShortestPath(graph, src, dest, numNodes)
+                If currentShortestTime equals targetTime:
+                    Break
+
+        Print updated shortest time
+        If currentShortestTime equals targetTime:
+            Break
+
+    If currentShortestTime is not equal to targetTime:
+        Print unable to meet target time
+        Return empty result
+
+    Initialize result array of size roads.length
+    For each road in roads:
+        Set u, v, weight from road
+        
+        If weight is -1:
+            Find updated weight for construction edges
+            Set weight to updated weight
+
+        Set result[index++] to [u, v, weight]
+
+    Return result
+
+Method updateEdgeWeights(graph, u, v, newWeight):
+    Remove existing Pair(u, v) from graph[u]
+    Remove existing Pair(v, u) from graph[v]
+    Add Pair(v, newWeight) to graph[u]
+    Add Pair(u, newWeight) to graph[v]
+
+Method randomInRange(min, max):
+    Return random integer between min and max
+
+Main method:
+    Initialize roads as a list of edges
+    Set src, dest, targetTime, numNodes
+    Call adjustRoadWeights with these parameters
+    Print modified roads
+
+ */
 import java.util.*;
 
 public class CityPlanner {

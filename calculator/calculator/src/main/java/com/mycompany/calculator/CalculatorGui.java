@@ -14,6 +14,7 @@ public class CalculatorGui extends javax.swing.JFrame {
      */
     public CalculatorGui() {
         initComponents();
+        setResizable(false);
     }
 
     /**

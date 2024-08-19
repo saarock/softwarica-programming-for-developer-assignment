@@ -39,12 +39,13 @@ public class Hiking {
             if (current > prev && (current - prev <= k)) {
                 longest++; // Increment the length of the current valid hike
             }
+            System.out.println(longest + " THis is the lonest " + maxLen);
             // Update maxLen with the maximum value between current maxLen and (longest + 1)
             maxLen = Math.max(maxLen, longest + 1);
 
             prev = nums[i]; // Update prev to the current altitude for the next iteration
         }
-
+        longest = 0;
         return maxLen; // Return the length of the longest valid hike
     }
 
